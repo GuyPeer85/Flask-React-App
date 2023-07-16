@@ -2,52 +2,27 @@ name: Build and Deploy
 
 on:
   push:
-  pull_request:
-  workflow_dispatch:
     branches:
-      - compose
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get Server IP
-        id: server_ip
-        run: |
-          echo "SERVER_IP=$(curl -s ifconfig.me)" >> $GITHUB_ENV
-
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: 14
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build React app
-        run: |
-          cd client
-          npm install
-          REACT_APP_SERVER_IP="${{ env.SERVER_IP }}" npm run build
-
-      - name: Set up Docker Compose
-        uses: isbang/compose-action@v1.4.1
-        with:
-          compose-file: |
-            docker-compose.yml
 
       - name: Build and Deploy
         run: |
           docker-compose up -d --build
 
       - name: Verify Server Deployment
-        run: |
-          curl "http://${{ env.SERVER_IP }}:5000/api/message"
+        run: curl -sSf "http://localhost:5000/api/message"
 
       - name: Verify Client Deployment
         run: |
-          until curl --output /dev/null --silent --head --fail "http://${{ env.SERVER_IP }}:3000"; do sleep 5; done
+          until curl -sSf --output /dev/null "http://localhost:3000"; do sleep 5; done
