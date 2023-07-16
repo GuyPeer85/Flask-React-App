@@ -26,4 +26,4 @@ jobs:
         run: sleep 10
 
       - name: Print Server Logs
-        run: docker-compose logs flask-react-app_server
+        run: docker-compose logs server
