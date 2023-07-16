@@ -19,13 +19,5 @@ jobs:
         run: |
           docker-compose up -d --build
 
-      - name: Get Server IP
-        id: server_ip
-        run: |
-          echo "SERVER_IP=$(curl -s ifconfig.me)" >> $GITHUB_ENV
-
-      - name: Print Server IP
-        run: echo "Server IP: ${{ env.SERVER_IP }}"
-
       - name: Print Docker Images
         run: docker images
