@@ -40,8 +40,8 @@ jobs:
           compose-file: |
             docker-compose.yml
 
-      -name: checking IP
-       run: |
+      - name: checking IP
+        run: |
           echo "Server IP: $SERVER_IP"
 
       - name: Build and Deploy
