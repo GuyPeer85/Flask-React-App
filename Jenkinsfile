@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'compose', url: 'https://github.com/your-username/Flask-React-App.git'
+                git branch: 'compose', url: 'https://github.com/GuyPeer85/Flask-React-App.git'
             }
         }
 
@@ -27,7 +27,7 @@ pipeline {
         stage('Verify Server Deployment') {
             steps {
                 script {
-                    sh "curl http://localhost:5000/api/message"
+                    sh "curl http://192.168.1.175:5000/api/message"
                 }
             }
         }
@@ -35,7 +35,7 @@ pipeline {
         stage('Verify Client Deployment') {
             steps {
                 script {
-                    sh 'until $(curl --output /dev/null --silent --head --fail http://localhost:3000); do sleep 5; done'
+                    sh 'until $(curl --output /dev/null --silent --head --fail http://192.168.1.175:3000); do sleep 5; done'
                 }
             }
         }
