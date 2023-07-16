@@ -24,6 +24,10 @@ jobs:
 
       - name: Print Server Logs
         run: docker-compose logs server
+    
 
       - name: Print Server IP
-        run: ifconfig enp0s3 | awk '/inet / {print $2}' | head -n 1
+        run: ip -4 addr show | awk '/inet / {print $2}' | head -n 1
+      
+      - name: Verify Server Deployment
+        run: curl -sSf "http://172.18.0.3:5000/api/message"
