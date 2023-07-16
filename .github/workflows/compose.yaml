@@ -13,9 +13,9 @@ jobs:
 
     steps:
       - name: Get Server IP
+        id: server_ip
         run: |
-          SERVER_IP=$(curl -s ifconfig.me)
-          echo "Server IP: $SERVER_IP"
+          echo "::set-output name=server_ip::$(curl -s ifconfig.me)"
 
       - name: Checkout code
         uses: actions/checkout@v2
@@ -32,17 +32,13 @@ jobs:
         run: |
           cd client
           npm install
-          npm run build
+          REACT_APP_SERVER_IP="${{ steps.server_ip.outputs.server_ip }}" npm run build
 
       - name: Set up Docker Compose
         uses: isbang/compose-action@v1.4.1
         with:
           compose-file: |
             docker-compose.yml
-
-      - name: checking IP
-        run: |
-          echo "Server IP: $SERVER_IP"
 
       - name: Build and Deploy
         run: |
