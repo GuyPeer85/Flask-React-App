@@ -19,11 +19,11 @@ jobs:
         run: |
           docker-compose up -d --build
 
-      - name: Print Server IP
-        run: ifconfig enp0s3 | awk '/inet / {print $2}' | head -n 1
-
       - name: Wait for Container to Start
         run: sleep 10
 
       - name: Print Server Logs
         run: docker-compose logs server
+
+      - name: Print Server IP
+        run: ifconfig enp0s3 | awk '/inet / {print $2}' | head -n 1
