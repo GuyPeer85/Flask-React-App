@@ -1,3 +1,5 @@
+name: Build and Deploy
+
 on:
   push:
     branches:
@@ -11,35 +13,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Update system packages
-        run: |
-          sudo apt-get update
-          sudo apt-get upgrade -y
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
 
-      - name: Install Docker dependencies
-        run: |
-          sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+      - name: Install dependencies
+        run: npm install
 
-      - name: Add Docker GPG key
+      - name: Build React app
         run: |
-          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+          REACT_APP_SERVER_IP=<IP_OF_SERVER> npm run build
+          echo "REACT_APP_SERVER_IP=$REACT_APP_SERVER_IP" >> $GITHUB_ENV
 
-      - name: Add Docker repository
-        run: |
-          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-      - name: Update system packages (again)
-        run: |
-          sudo apt-get update
-
-      - name: Install Docker
-        run: |
-          sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+      - name: Set up Docker
+        uses: docker/setup-docker@v1
 
       - name: Build and Deploy
         run: |
-          docker compose down --rmi all
-          docker compose up -d --build
+          docker-compose down --rmi all
+          docker-compose up -d --build
           
       - name: Verify Server Deployment
         run: curl http://localhost:5000/api/message
