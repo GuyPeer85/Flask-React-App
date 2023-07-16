@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 
+const serverIP = process.env.REACT_APP_SERVER_IP; 
+
 function App() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    fetch(`http://${serverHostname}:5000/api/message`)
+    fetch(`http://${serverIP}:5000/api/message`)
       .then(response => response.json())
       .then(data => {
-        console.log("Received response:", data); // Log the response
+        console.log("Received response:", data);
         setMessage(data.message);
       });
   }, []);
 
-  console.log("Client-side app initialized"); // Log the initialization
+  console.log("Client-side app initialized");
 
   return (
     <div className="App">
