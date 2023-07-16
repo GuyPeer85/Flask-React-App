@@ -29,10 +29,14 @@ jobs:
           echo "REACT_APP_SERVER_IP=$REACT_APP_SERVER_IP" >> $GITHUB_ENV
 
       - name: Set up Docker Compose
-        uses: docker/compose-action@v1
+        uses: isbang/compose-action@v1.4.1
+        with:
+          compose-file: |
+            docker-compose.yml
 
       - name: Build and Deploy
-        run: docker-compose up -d --build
+        run: |
+          docker-compose up -d --build
 
       - name: Verify Server Deployment
         run: curl http://$SERVER_IP:5000/api/message
