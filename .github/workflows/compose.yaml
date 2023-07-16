@@ -19,9 +19,8 @@ jobs:
         run: |
           docker-compose up -d --build
 
-      - name: Print Docker Images
-        run: docker images
+      - name: Print Runs containers 
+        run: docker ps
 
-      - name: Print Server Logs
-        run: |
-          docker logs flask-react-app_server
+      - name: Print server IP
+        run: ifconfig enp0s3 | awk '/inet / {print $2}' | head -n 1
