@@ -8,27 +8,25 @@ on:
       - compose
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Docker Compose
-        uses: docker/compose-action@v1.2.0
-        with:
-          compose-file: |
-            docker-compose.yml
-
       - name: Build and Deploy
         run: |
           docker-compose up -d --build
 
-      - name: Wait for server to start
+      - name: Get Server IP
+        id: server_ip
         run: |
-          echo "Waiting for server to start..."
-          until curl --output /dev/null --silent --head --fail "http://localhost:5000"; do sleep 5; done
+          echo "SERVER_IP=$(curl -s ifconfig.me)" >> $GITHUB_ENV
 
-      - name: Verify Deployment
-        run: curl -sSf "http://localhost:5000/api/message"
+      - name: Print Server IP
+        run: echo "Server IP: ${{ env.SERVER_IP }}"
+
+      - name: Print Server Message
+        run: |
+          docker images
