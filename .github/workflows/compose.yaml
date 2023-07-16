@@ -8,20 +8,27 @@ on:
       - compose
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up Docker Compose
+        uses: docker/compose-action@v1.2.0
+        with:
+          compose-file: |
+            docker-compose.yml
+
       - name: Build and Deploy
         run: |
           docker-compose up -d --build
 
-      - name: Verify Server Deployment
-        run: curl -sSf "http://localhost:5000/api/message"
-
-      - name: Verify Client Deployment
+      - name: Wait for server to start
         run: |
-          until curl -sSf --output /dev/null "http://localhost:3000"; do sleep 5; done
+          echo "Waiting for server to start..."
+          until curl --output /dev/null --silent --head --fail "http://localhost:5000"; do sleep 5; done
+
+      - name: Verify Deployment
+        run: curl -sSf "http://localhost:5000/api/message"
