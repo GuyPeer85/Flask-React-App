@@ -40,13 +40,17 @@ jobs:
           compose-file: |
             docker-compose.yml
 
+      -name: checking IP
+       run: |
+          echo "Server IP: $SERVER_IP"
+
       - name: Build and Deploy
         run: |
           docker-compose up -d --build
 
       - name: Verify Server Deployment
-        run: curl http://$SERVER_IP:5000/api/message
+        run: curl "http://$SERVER_IP:5000/api/message"
       
       - name: Verify Client Deployment
         run: |
-          until curl --output /dev/null --silent --head --fail http://$SERVER_IP:3000; do sleep 5; done
+          until curl --output /dev/null --silent --head --fail "http://$SERVER_IP:3000"; do sleep 5; done
