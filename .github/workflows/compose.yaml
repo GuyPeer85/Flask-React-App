@@ -28,5 +28,4 @@ jobs:
         run: echo "Server IP: ${{ env.SERVER_IP }}"
 
       - name: Print Docker Images
-        run: |
-          docker images
+        run: docker images
