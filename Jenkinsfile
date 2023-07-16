@@ -11,7 +11,7 @@ pipeline {
         stage('Clean Up') {
             steps {
                 script {
-                    sh "docker-compose down --rmi all"
+                    sh "docker compose down --rmi all"
                 }
             }
         }
@@ -19,7 +19,7 @@ pipeline {
         stage('Build and Deploy') {
             steps {
                 script {
-                    sh "docker-compose up -d --build"
+                    sh "docker compose up -d --build"
                 }
             }
         }
