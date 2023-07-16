@@ -26,7 +26,10 @@ jobs:
       - name: Build React app
         env:
           REACT_APP_SERVER_IP: <IP_OF_SERVER>
-        run: npm run build
+        run: |
+          cd client
+          npm install
+          npm run build
 
       - name: Set up Docker Compose
         uses: isbang/compose-action@v1.4.1
