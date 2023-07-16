@@ -21,3 +21,7 @@ jobs:
 
       - name: Print Docker Images
         run: docker images
+
+      - name: Print Server Logs
+        run: |
+          docker logs flask-react-app_server
