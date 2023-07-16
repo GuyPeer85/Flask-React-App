@@ -35,7 +35,7 @@ jobs:
           docker-compose up -d --build
           
       - name: Verify Server Deployment
-        run: curl http://localhost:5000/api/message
+        run: curl http://$SERVER_IP:5000/api/message
       
       - name: Verify Client Deployment
         run: |
