@@ -19,15 +19,12 @@ jobs:
         run: |
           docker-compose up -d --build
 
-      - name: Wait for Container to Start
-        run: sleep 10
-
       - name: Print Server Logs
         run: docker-compose logs server
-    
-
-      - name: Print Server IP
-        run: ip -4 addr show | awk '/inet / {print $2}' | head -n 1
       
       - name: Verify Server Deployment
         run: curl -sSf "http://172.18.0.3:5000/api/message"
+
+      - name: Verify Client Deployment
+        run: |
+          until curl -sSf --output /dev/null "http://172.18.0.3:3000"; do sleep 5; done
