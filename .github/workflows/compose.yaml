@@ -14,27 +14,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      
-      - name: Print Server IP
-        run: |
-          ip -4 addr show dev eth0 | awk '/inet / {print $2}' | cut -d/ -f1
 
       - name: Build and Deploy
         run: |
           docker-compose up -d --build
 
-      - name: Print Docker Images
-        run: |
-          docker images
-          docker ps
-          docker ps -a
-          
+      - name: Print Server IP
+        run: ifconfig enp0s3 | awk '/inet / {print $2}' | head -n 1
+
       - name: Wait for Container to Start
         run: sleep 10
 
       - name: Print Server Logs
-        run: |
-          docker logs flask-react-app_server
-
-
-
+        run: docker-compose logs flask-react-app_server
