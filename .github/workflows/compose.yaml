@@ -12,6 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Get Server IP
+        run: |
+          SERVER_IP=$(curl -s ifconfig.me)
+          echo "Server IP: $SERVER_IP"
+
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -24,8 +29,6 @@ jobs:
         run: npm install
 
       - name: Build React app
-        env:
-          REACT_APP_SERVER_IP: <IP_OF_SERVER>
         run: |
           cd client
           npm install
