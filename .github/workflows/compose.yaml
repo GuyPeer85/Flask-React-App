@@ -1,0 +1,29 @@
+name: Build and Deploy on docker compose
+
+on:
+  push:
+    branches:
+      - compose
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker
+        uses: docker/setup-docker@v1
+
+      - name: Build and Deploy
+        run: |
+          docker compose down --rmi all
+          docker compose up -d --build
+          
+      - name: Verify Server Deployment
+        run: curl http://localhost:5000/api/message
+      
+      - name: Verify Client Deployment
+        run: |
+          until curl --output /dev/null --silent --head --fail http://localhost:3000; do sleep 5; done
