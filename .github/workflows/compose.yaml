@@ -28,7 +28,13 @@ jobs:
           docker images
           docker ps
           docker ps -a
-          docker logs --tail 100 flask-react-app_server
+          
+      - name: Wait for Container to Start
+        run: sleep 10
+
+      - name: Print Server Logs
+        run: |
+          docker logs flask-react-app_server
 
 
 
