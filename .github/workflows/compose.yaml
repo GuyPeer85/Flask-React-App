@@ -45,8 +45,9 @@ jobs:
           docker-compose up -d --build
 
       - name: Verify Server Deployment
-        run: curl "http://${{ env.SERVER_IP }}:5000/api/message"
-      
+        run: |
+          curl "http://${{ env.SERVER_IP }}:5000/api/message"
+
       - name: Verify Client Deployment
         run: |
           until curl --output /dev/null --silent --head --fail "http://${{ env.SERVER_IP }}:3000"; do sleep 5; done
