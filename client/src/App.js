@@ -5,7 +5,7 @@ function App() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    fetch('http://192.168.1.175:5000/api/message')
+    fetch(`http://${serverHostname}:5000/api/message`)
       .then(response => response.json())
       .then(data => {
         console.log("Received response:", data); // Log the response
