@@ -1,21 +1,24 @@
-name: Deploy with Terraform
+name: Deploy to AWS
 
 on:
   push:
     branches:
       - aws
     paths:
-      - 'terraform/main.tf'
+      - 'server/Dockerfile'
+      - 'server/app.py'
   pull_request:
     branches:
       - aws
     paths:
-      - 'terraform/main.tf'
+      - 'server/Dockerfile'
+      - 'server/app.py'
   workflow_dispatch:
     branches:
       - aws
     paths:
-      - 'terraform/main.tf'
+      - 'server/Dockerfile'
+      - 'server/app.py'
 
 jobs:
   deploy:
