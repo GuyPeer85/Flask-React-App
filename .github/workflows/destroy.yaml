@@ -1,11 +1,11 @@
 name: Destroy AWS Infrastructure
 
 on:
-  workflow_dispatch:
-    inputs:
-      destroy:
-        description: 'Destroy AWS Infrastructure'
-        required: true
+  push:
+    branches:
+      - aws
+    paths:
+      - 'destory.txt'
 
 jobs:
   destroy:
