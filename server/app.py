@@ -3,7 +3,7 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)  # This will enable CORS for all routes
+CORS(app)  
 
 # Create a logger
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ logger.addHandler(file_handler)
 @app.route('/api/message', methods=['GET'])
 def home():
     logger.info('Received request for /api/message')
-    return jsonify({"message": "docker compose work fine! test 4"}), 200
+    return jsonify({"message": "Hello from server!"}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
