@@ -19,11 +19,6 @@ on:
     paths:
       - 'server/Dockerfile'
       - 'server/app.py'
-  workflow_run:
-    workflows:
-      - 'Deploy to AWS'
-    types:
-      - updated
 
 jobs:
   deploy:
