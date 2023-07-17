@@ -24,18 +24,16 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
+      steps:
+      - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Configure AWS credentials
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-        env:
-          AWS_SDK_LOAD_CONFIG: 1
+          aws-region: ${{ env.REGION }}
 
       - name: Describe stack events
         run: aws cloudformation describe-stack-events --stack-name my-stack
