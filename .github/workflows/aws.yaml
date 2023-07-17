@@ -1,24 +1,21 @@
-name: Deploy to AWS
+name: Deploy with Terraform
 
 on:
   push:
     branches:
       - aws
     paths:
-      - 'server/Dockerfile'
-      - 'server/app.py'
+      - 'terraform/main.tf'
   pull_request:
     branches:
       - aws
     paths:
-      - 'server/Dockerfile'
-      - 'server/app.py'
+      - 'terraform/main.tf'
   workflow_dispatch:
     branches:
       - aws
     paths:
-      - 'server/Dockerfile'
-      - 'server/app.py'
+      - 'terraform/main.tf'
 
 jobs:
   deploy:
@@ -28,21 +25,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          terraform_version: 1.0.0
 
-      - name: Delete CloudFormation stack
-        run: aws cloudformation delete-stack --stack-name my-stack
+      - name: Terraform Init
+        run: terraform init
 
-      - name: Wait for stack deletion
-        run: aws cloudformation wait stack-delete-complete --stack-name my-stack
+      - name: Terraform Plan
+        run: terraform plan
 
-      - name: Describe stack events
-        run: aws cloudformation describe-stack-events --stack-name my-stack
-
-      - name: Deploy AWS CloudFormation stack
-        run: aws cloudformation deploy --stack-name my-stack --template-file cloudformation.yml
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
