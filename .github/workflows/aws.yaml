@@ -33,11 +33,13 @@ jobs:
         with:
           terraform_version: 1.0.0
 
+      - name: Configure AWS credentials
+        run: |
+          echo "aws_access_key=$AWS_ACCESS_KEY_ID" >> $GITHUB_ENV
+          echo "aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" >> $GITHUB_ENV
+
       - name: Terraform Init
         run: terraform init
 
       - name: Terraform Plan
         run: terraform plan
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve
