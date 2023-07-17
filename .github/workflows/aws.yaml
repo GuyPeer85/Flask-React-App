@@ -33,10 +33,11 @@ jobs:
 
       - name: Configure Terraform
         run: |
-          echo "aws_access_key = ${{ secrets.AWS_ACCESS_KEY }}" 
-          echo "aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}" 
+          echo "aws_access_key = ${{ secrets.AWS_ACCESS_KEY }}" > terraform/terraform.tfvars
+          echo "aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> terraform/terraform.tfvars
 
       - name: Terraform Plan
+        working-directory: terraform
         run: |
           terraform init
           terraform plan
