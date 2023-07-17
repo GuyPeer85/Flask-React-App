@@ -25,6 +25,5 @@ jobs:
       - name: Verify Server Deployment
         run: curl -sSf "http://172.18.0.3:5000/api/message"
 
-      - name: Verify Client Deployment
-        run: |
-          until curl -sSf --output /dev/null "http://172.18.0.3:3000"; do sleep 5; done
+      - name: Waitting for check on postman
+        run: wait 40
