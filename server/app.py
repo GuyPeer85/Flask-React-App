@@ -15,6 +15,11 @@ formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
+@app.route('/', methods=['GET'])
+def root():
+    logger.info('Received request for /')
+    return jsonify({"message": "Hello from root!"}), 200
+
 @app.route('/api/message', methods=['GET'])
 def home():
     logger.info('Received request for /api/message')
