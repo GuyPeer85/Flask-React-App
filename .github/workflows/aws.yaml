@@ -32,14 +32,12 @@ jobs:
         uses: hashicorp/setup-terraform@v1
 
       - name: Configure Terraform
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> $GITHUB_ENV
-          echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> $GITHUB_ENV
+          echo "aws_access_key = \"AKIA4LD7OFQOTO5ZFSEU\"" > terraform/terraform.tfvars
+          echo "aws_secret_access_key = \"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\"" >> terraform/terraform.tfvars
 
       - name: Terraform Plan
+        working-directory: terraform
         run: |
           terraform init
           terraform plan
