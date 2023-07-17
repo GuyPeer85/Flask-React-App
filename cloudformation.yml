@@ -1,0 +1,101 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: A sample template for deploying a Flask-React app
+
+Resources:
+  # ECR (Elastic Container Registry)
+  FlaskReactAppRepoECR:
+    Type: 'AWS::ECR::Repository'
+    Properties:
+      RepositoryName: 'flask-react-app-repo-ecr'
+      RepositoryPolicyText:
+        Version: '2008-10-17'
+        Statement:
+          - Sid: AllowPushPull
+            Effect: Allow
+            Principal: '*'
+            Action:
+              - 'ecr:GetDownloadUrlForLayer'
+              - 'ecr:BatchGetImage'
+              - 'ecr:BatchCheckLayerAvailability'
+              - 'ecr:PutImage'
+              - 'ecr:InitiateLayerUpload'
+              - 'ecr:UploadLayerPart'
+              - 'ecr:CompleteLayerUpload'
+
+  # EC2 Security Group
+  FlaskReactAppSG:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupName: 'flask-react-app-SG'
+      GroupDescription: 'flask-react-app-SG'
+      SecurityGroupEgress:
+        - CidrIp: '0.0.0.0/0'
+          IpProtocol: '-1'
+      SecurityGroupIngress:
+        - CidrIp: '0.0.0.0/0'
+          IpProtocol: 'tcp'
+          FromPort: 80
+          ToPort: 80
+        - CidrIp: '0.0.0.0/0'
+          IpProtocol: 'tcp'
+          FromPort: 5000
+          ToPort: 5000
+
+  # ECS Cluster
+  FlaskReactAppCluster:
+    Type: 'AWS::ECS::Cluster'
+    Properties:
+      ClusterName: 'flask-react-app-server-side'
+
+   # Task Definition
+  FlaskReactAppTaskDefinition:
+    Type: 'AWS::ECS::TaskDefinition'
+    Properties:
+      Family: 'flask-react-app-task-family'
+      Cpu: '256'
+      Memory: '512'
+      NetworkMode: 'awsvpc'
+      RequiresCompatibilities:
+        - 'FARGATE'
+      ExecutionRoleArn: 'arn:aws:iam::848523308061:role/ecsTaskExecutionRole'
+      ContainerDefinitions:
+        - Name: 'flask-react-app-container'
+          Image: '848523308061.dkr.ecr.us-east-1.amazonaws.com/flask-react-app-repo-ecr:latest'
+          PortMappings:
+            - ContainerPort: 80
+            - ContainerPort: 5000
+
+  # EC2 Target Group
+  FlaskReactAppTG:
+    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
+    Properties:
+      Name: 'flask-react-app-TG'
+      Port: 80
+      Protocol: 'HTTP'
+      TargetType: 'ip'
+      VpcId: 'vpc-08d9d0b1dc4b47d41'
+
+  # EC2 Application Load Balancer
+  FlaskReactAppALB:
+    Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
+    Properties:
+      Name: 'flask-react-app-ALB'
+      Subnets: 
+        - 'subnet-012ef49073ec21b34'  
+        - 'subnet-018a531e030fc761b'
+        - 'subnet-0ed855ff1f7d5fb61'
+        - 'subnet-09f48fe3de3534711'
+        - 'subnet-0ebda44417a1904a9'
+        - 'subnet-0b0fc1ed5fa23a11b'
+      SecurityGroups: 
+        - !Ref FlaskReactAppSG
+
+  FlaskReactAppListener:
+    Type: 'AWS::ElasticLoadBalancingV2::Listener'
+    Properties:
+      LoadBalancerArn: !Ref FlaskReactAppALB
+      Port: 80
+      Protocol: 'HTTP'
+      DefaultActions:
+        - Type: 'forward'
+          TargetGroupArn: !Ref FlaskReactAppTG
