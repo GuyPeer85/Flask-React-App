@@ -55,13 +55,14 @@ jobs:
         run: terraform apply -auto-approve -var="create_ecr_repository=true"
 
       - name: Login to Amazon ECR
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-        with:
-          registry: 848523308061.dkr.ecr.us-east-1.amazonaws.com
-          registry-type: private
-        env:
-          AWS_REGION: us-east-1
-          TERRAFORM_CLI_PATH: /home/runner/work/_temp/40094850-0c19-468c-a023-49736052691c
+        # with:
+        #   registry: 848523308061.dkr.ecr.us-east-1.amazonaws.com
+        #   registry-type: private
+        # env:
+        #   AWS_REGION: us-east-1
+        #   TERRAFORM_CLI_PATH: /home/runner/work/_temp/40094850-0c19-468c-a023-49736052691c
 
       - name: Build and Push Docker image
         id: build-image
@@ -74,6 +75,6 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Terraform Apply for remaining resources
-        working-directory: terraform
-        run: terraform apply -auto-approve
+      # - name: Terraform Apply for remaining resources
+      #   working-directory: terraform
+      #   run: terraform apply -auto-approve
