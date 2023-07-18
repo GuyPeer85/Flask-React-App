@@ -121,6 +121,12 @@ resource "aws_ecs_service" "flask_react_app_service" {
     container_port   = 5000
   }
 
+  # Service registry configuration
+  service_registries {
+    registry_arn   = aws_servicediscovery_service.flask_react_app_service_discovery.arn
+    container_port = 5000
+  }
+
   depends_on = [
     aws_lb_listener.flask_react_app_listener_80,
     aws_lb_listener.flask_react_app_listener_5000
