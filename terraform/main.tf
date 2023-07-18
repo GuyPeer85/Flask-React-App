@@ -14,14 +14,14 @@ resource "aws_security_group" "flask_react_app_sg" {
     from_port   = 0
     to_port     = 65535
     protocol    = "tcp"
-    security_groups = ["sg-011947a6326ed4e23"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    security_groups = ["sg-011947a6326ed4e23"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
