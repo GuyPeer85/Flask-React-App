@@ -102,6 +102,4 @@ jobs:
 
       - name: Print Service IPv4
         run: |
-          echo "Service IPv4: ${{ steps.create-ecr-repo.outputs.service_ipv4 }}"
-
-        
+          terraform output service_ipv4
