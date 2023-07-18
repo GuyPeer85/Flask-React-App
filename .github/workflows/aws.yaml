@@ -52,7 +52,9 @@ jobs:
       - name: Terraform Apply for ECR
         # if: steps.check-ecr.outputs.repo_exists == 'null'
         working-directory: terraform/ecr/
-        run: terraform apply -auto-approve -var="create_ecr_repository=true"
+        run: |
+          terraform init
+          terraform apply -auto-approve -var="create_ecr_repository=true"
 
   build-and-push:
     needs: create-ecr-repo
