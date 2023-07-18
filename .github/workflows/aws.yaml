@@ -100,17 +100,7 @@ jobs:
           terraform init 
           terraform apply -auto-approve
 
-      - name: Retrieve ECS service public IP
-        id: get-service-ip
+      - name: Print public IP
         run: |
-          TASK_ARN=$(aws ecs list-tasks --service-name "flask-react-app-service" --query 'taskArns[0]' --output text)
-          TASK_DETAILS=$(aws ecs describe-tasks --task "${TASK_ARN}" --query 'tasks[0].attachments[0].details')
-          ENI=$(echo "$TASK_DETAILS" | jq -r '.[] | select(.name=="networkInterfaceId").value')
-          IP=$(aws ec2 describe-network-interfaces --network-interface-ids "$ENI" --query 'NetworkInterfaces[0].Association.PublicIp' --output text)
-          echo "::set-output name=service_ip::$IP"
-
-      - name: Send HTTP request to ECS service
-        run: |
-          service_ip=$(/bin/bash -c "echo ${{ steps.get-service-ip.outputs.service_ip }}")
-          response=$(curl -s "http://$service_ip:5000/api/message")
-          echo "Response from ECS service: $response"
+          IP=$(aws ecs describe-services --cluster flask-react-app-cluster --services flask-react-app-service --query "services[0].networkConfiguration.awsvpcConfiguration.assignPublicIp" --output text)
+          echo "Public IP: $IP"
