@@ -33,14 +33,8 @@ jobs:
 
       - name: Configure Terraform
         run: |
-          echo "aws_access_key = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" > terraform/terraform.tfvars
-          echo "aws_secret_access_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> terraform/terraform.tfvars
-
-      - name: Set up AWS CLI
-        run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set default.region us-east-1
+          echo "aws_access_key = \"AKIA4LD7OFQOTO5ZFSEU\"" > terraform/terraform.tfvars
+          echo "aws_secret_access_key = \"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\"" >> terraform/terraform.tfvars
 
       - name: Terraform Plan
         working-directory: terraform
@@ -69,14 +63,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+      
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-        with:
-          registry: 848523308061.dkr.ecr.us-east-1.amazonaws.com
-        env:
-          AWS_REGION: us-east-1
+        run: |
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 848523308061.dkr.ecr.us-east-1.amazonaws.com
 
       - name: Build and Push Docker image
         id: build-image
@@ -102,15 +100,11 @@ jobs:
 
       - name: Configure Terraform
         run: |
-          echo "aws_access_key = \"${{ secrets.AWS_ACCESS_KEY_ID }}\"" > terraform/terraform.tfvars
-          echo "aws_secret_access_key = \"${{ secrets.AWS_SECRET_ACCESS_KEY }}\"" >> terraform/terraform.tfvars
-
-      - name: Set up AWS CLI
-        run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set default.region us-east-1
+          echo "aws_access_key = \"AKIA4LD7OFQOTO5ZFSEU\"" > terraform/terraform.tfvars
+          echo "aws_secret_access_key = \"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\"" >> terraform/terraform.tfvars
 
       - name: Terraform Apply for remaining resources
         working-directory: terraform
-        run: terraform apply -auto-approve
+        run: |
+          terraform init 
+          terraform apply -auto-approve
