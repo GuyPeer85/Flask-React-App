@@ -35,82 +35,73 @@ jobs:
         run: |
           echo "aws_access_key = \"AKIA4LD7OFQOTO5ZFSEU\"" > terraform/terraform.tfvars
           echo "aws_secret_access_key = \"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\"" >> terraform/terraform.tfvars
+
+      - name: Terraform Plan
+        working-directory: terraform/ecr/
+        run: |
+          terraform init
+          terraform plan
+
+      - name: Terraform Apply for ECR
+        working-directory: terraform/ecr/
+        run: |
+          terraform apply -auto-approve -var="create_ecr_repository=true"
+
+  build-and-push:
+    needs: create-ecr-repo
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
       
-      - name: Check AWS CLI version
-        run: aws --version
+      - name: Set up AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-  #     - name: Terraform Plan
-  #       working-directory: terraform/ecr/
-  #       run: |
-  #         terraform init
-  #         terraform plan
+      - name: Login to Amazon ECR
+        id: login-ecr
+        run: |
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 848523308061.dkr.ecr.us-east-1.amazonaws.com
 
-  #     - name: Terraform Apply for ECR
-  #       working-directory: terraform/ecr/
-  #       run: |
-  #         terraform apply -auto-approve -var="create_ecr_repository=true"
+      - name: Build and Push Docker image
+        id: build-image
+        env:
+          ECR_REGISTRY: 848523308061.dkr.ecr.us-east-1.amazonaws.com
+          ECR_REPOSITORY: flask-react-app-repo-ecr
+          IMAGE_TAG: latest
+        run: |
+          cd server
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-  # build-and-push:
-  #   needs: create-ecr-repo
-  #   runs-on: ubuntu-latest
+  apply-remaining-resources:
+    needs: build-and-push
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v2
-      
-  #     - name: Set up AWS credentials
-  #       uses: aws-actions/configure-aws-credentials@v1
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws-region: us-east-1
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-  #     - name: Login to Amazon ECR
-  #       id: login-ecr
-  #       run: |
-  #         aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 848523308061.dkr.ecr.us-east-1.amazonaws.com
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
 
-  #     - name: Build and Push Docker image
-  #       id: build-image
-  #       env:
-  #         ECR_REGISTRY: 848523308061.dkr.ecr.us-east-1.amazonaws.com
-  #         ECR_REPOSITORY: flask-react-app-repo-ecr
-  #         IMAGE_TAG: latest
-  #       run: |
-  #         cd server
-  #         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-  #         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      - name: Configure Terraform
+        run: |
+          echo "aws_access_key = \"AKIA4LD7OFQOTO5ZFSEU\"" > terraform/terraform.tfvars
+          echo "aws_secret_access_key = \"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\"" >> terraform/terraform.tfvars
 
-  # apply-remaining-resources:
-  #   needs: build-and-push
-  #   runs-on: ubuntu-latest
+      - name: Terraform Apply for remaining resources
+        working-directory: terraform
+        run: |
+          terraform init 
+          terraform apply -auto-approve
 
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v2
-
-  #     - name: Set up Terraform
-  #       uses: hashicorp/setup-terraform@v1
-
-  #     - name: Configure Terraform
-  #       run: |
-  #         echo "aws_access_key = \"AKIA4LD7OFQOTO5ZFSEU\"" > terraform/terraform.tfvars
-  #         echo "aws_secret_access_key = \"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\"" >> terraform/terraform.tfvars
-
-  #     - name: Upgrade AWS CLI
-  #       run: |
-  #         sudo apt-get install -y --no-install-recommends unzip
-  #         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  #         unzip awscliv2.zip
-  #         sudo ./aws/install
-
-  #     - name: Terraform Apply for remaining resources
-  #       working-directory: terraform
-  #       run: |
-  #         terraform init 
-  #         terraform apply -auto-approve
-
-  #     - name: Print public IP
-  #       run: |
-  #         IP=$(aws ecs describe-services --cluster flask-react-app-cluster --services flask-react-app-service --query "services[0].networkConfiguration.awsvpcConfiguration.assignPublicIp" --output text)
-  #         echo "Public IP: $IP"
+      - name: Get Service Public IP
+        shell: bash
+        run: |
+          IP=$(aws ecs describe-services --cluster flask-react-app-cluster --services flask-react-app-service --query "services[0].networkConfiguration.awsvpcConfiguration.assignPublicIp" --output text)
+          echo "Public IP: $IP"
