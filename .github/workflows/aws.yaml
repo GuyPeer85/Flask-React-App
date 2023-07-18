@@ -37,7 +37,7 @@ jobs:
           echo "aws_secret_access_key = \"jfpauoBBylngKIC51gmkJzlEIJ+a35c0RIFVEhFW\"" >> terraform/terraform.tfvars
 
       - name: Terraform Plan
-        working-directory: terraform/ecr/
+        working-directory: terraform
         run: |
           terraform init
           terraform plan
@@ -45,6 +45,7 @@ jobs:
       - name: Terraform Apply for ECR
         working-directory: terraform/ecr/
         run: |
+          terraform init
           terraform apply -auto-approve -var="create_ecr_repository=true"
 
   build-and-push:

@@ -10,28 +10,26 @@ resource "aws_security_group" "flask_react_app_sg" {
     protocol    = "-1"
   }
 
-  
-ingress {
-  from_port   = 0
-  to_port     = 65535
-  protocol    = "tcp"
-  security_groups = ["sg-011947a6326ed4e23"]
-}
+  ingress {
+    from_port   = 0
+    to_port     = 65535
+    protocol    = "tcp"
+    security_groups = ["sg-011947a6326ed4e23"]
+  }
 
-ingress {
-  from_port   = 0
-  to_port     = 0
-  protocol    = "-1"
-  security_groups = ["sg-011947a6326ed4e23"]
-}
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    security_groups = ["sg-011947a6326ed4e23"]
+  }
 
-ingress {
-  from_port   = 0
-  to_port     = 0
-  protocol    = "-1"
-  cidr_blocks = ["0.0.0.0/0"]
-}
-
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 # ECS Cluster
@@ -53,11 +51,6 @@ resource "aws_ecs_task_definition" "flask_react_app_task_definition" {
       "name": "flask-react-app-container",
       "image": "848523308061.dkr.ecr.us-east-1.amazonaws.com/flask-react-app-repo-ecr:latest",
       "portMappings": [
-        {
-          "containerPort": 80,
-          "hostPort": 80,
-          "protocol": "tcp"
-        },
         {
           "containerPort": 5000,
           "hostPort": 5000,
@@ -84,8 +77,8 @@ resource "aws_lb" "flask_react_app_alb" {
   security_groups  = [aws_security_group.flask_react_app_sg.id]
 }
 
-# ALB Listener
-resource "aws_lb_listener" "flask_react_app_listener" {
+# ALB Listener for port 80
+resource "aws_lb_listener" "flask_react_app_listener_80" {
   load_balancer_arn = aws_lb.flask_react_app_alb.arn
   port              = 80
   protocol          = "HTTP"
@@ -96,11 +89,14 @@ resource "aws_lb_listener" "flask_react_app_listener" {
   }
 }
 
+# ALB Listener for port 5000
+resource "aws_lb_listener" "flask_react_app_listener_5000" {
+  load_balancer_arn = aws_lb.flask_react_app_alb.arn
+  port              = 5000
+  protocol          = "HTTP"
 
-
-  load_balancer {
+  default_action {
+    type             = "forward"
     target_group_arn = aws_lb_target_group.flask_react_app_tg.arn
-    container_name   = "flask-react-app-container"
-    container_port   = 5000
   }
 }
