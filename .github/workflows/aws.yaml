@@ -42,12 +42,12 @@ jobs:
           terraform init
           terraform plan
 
-      # - name: Check if ECR repository exists
-      #   id: check-ecr
-      #   run: |
-      #     REPO_NAME="flask-react-app-repo-ecr"
-      #     REPO_EXISTS=$(aws ecr describe-repositories --repository-names $REPO_NAME --query 'repositories[0]' --output text)
-      #     echo "::set-output name=repo_exists::${REPO_EXISTS}"
+      - name: Check if ECR repository exists
+        id: check-ecr
+        run: |
+          REPO_NAME="flask-react-app-repo-ecr"
+          REPO_EXISTS=$(aws ecr describe-repositories --repository-names $REPO_NAME --query 'repositories[0]' --output text)
+          echo "::set-output name=repo_exists::${REPO_EXISTS}"
 
       - name: Terraform Apply for ECR
         if: steps.check-ecr.outputs.repo_exists == 'null'
