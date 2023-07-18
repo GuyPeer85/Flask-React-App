@@ -43,23 +43,16 @@ jobs:
           terraform plan
 
       - name: Check if ECR repository exists
-        id: check-repo
+        id: check-ecr
         run: |
-          aws ecr describe-repositories --repository-names flask-react-app-repo-ecr --region us-east-1 || exit 0
-          echo "::set-output name=repo_exists::true"
-        env:
-          AWS_REGION: us-east-1
-
-      - name: Delete ECR repository if it exists
-        if: steps.check-repo.outputs.repo_exists == 'true'
-        run: |
-          aws ecr delete-repository --repository-name flask-react-app-repo-ecr --force --region us-east-1
-        env:
-          AWS_REGION: us-east-1
+          REPO_NAME="flask-react-app-repo-ecr"
+          REPO_EXISTS=$(aws ecr describe-repositories --repository-names $REPO_NAME --query 'repositories[0]' --output text)
+          echo "::set-output name=repo_exists::${REPO_EXISTS}"
 
       - name: Terraform Apply for ECR
+        if: steps.check-ecr.outputs.repo_exists == 'null'
         working-directory: terraform
-        run: terraform apply -auto-approve -target=aws_ecr_repository.flask_react_app_repo_ecr
+        run: terraform apply -auto-approve -var="create_ecr_repository=true"
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
