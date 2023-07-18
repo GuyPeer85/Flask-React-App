@@ -127,7 +127,6 @@ resource "aws_ecs_service" "flask_react_app_service" {
   ]
 }
 
-# output "service_ipv4" {
-#   value = aws_lb.flask_react_app_alb.load_balancer_type == "network" ? aws_lb.flask_react_app_alb.load_balancer_ip : aws_lb.flask_react_app_alb.dns_name
-#   description = "Service IPv4"
-# }
+output "server_response" {
+  value = aws_lb_target_group_attachment.flask_react_app_attachment.target_id
+}
