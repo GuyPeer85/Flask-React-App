@@ -129,4 +129,6 @@ resource "aws_ecs_service" "flask_react_app_service" {
 
 output "service_ipv4" {
   value = aws_lb.flask_react_app_alb.dns_name
+  echo  = true
+  description = "Service IPv4: ${aws_lb.flask_react_app_alb.dns_name}"
 }
