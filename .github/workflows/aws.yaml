@@ -58,9 +58,10 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
         with:
           registry: 848523308061.dkr.ecr.us-east-1.amazonaws.com
-          registry-type: 'repository'
+          registry-type: private
         env:
           AWS_REGION: us-east-1
+          TERRAFORM_CLI_PATH: /home/runner/work/_temp/40094850-0c19-468c-a023-49736052691c
 
       - name: Build and Push Docker image
         id: build-image
