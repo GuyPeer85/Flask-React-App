@@ -41,18 +41,18 @@ resource "aws_ecs_task_definition" "flask_react_app_task_definition" {
 
   container_definitions = jsonencode([
     {
-      name  = "flask-react-app-container"
-      image = "848523308061.dkr.ecr.us-east-1.amazonaws.com/flask-react-app-repo-ecr:latest"
-      port_mappings = [
+      "name": "flask-react-app-container",
+      "image": "848523308061.dkr.ecr.us-east-1.amazonaws.com/flask-react-app-repo-ecr:latest",
+      "portMappings": [
         {
-          container_port = 80
-          host_port      = 80
-          protocol       = "tcp"
+          "containerPort": 80,
+          "hostPort": 80,
+          "protocol": "tcp"
         },
         {
-          container_port = 5000
-          host_port      = 5000
-          protocol       = "tcp"
+          "containerPort": 5000,
+          "hostPort": 5000,
+          "protocol": "tcp"
         }
       ]
     }
