@@ -21,7 +21,7 @@ on:
       - 'server/app.py'
 
 jobs:
-  deploy:
+  create-ecr-repo:
     runs-on: ubuntu-latest
 
     steps:
@@ -54,6 +54,14 @@ jobs:
         working-directory: terraform
         run: terraform apply -auto-approve -var="create_ecr_repository=true"
 
+  build-and-push:
+    needs: create-ecr-repo
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
@@ -75,6 +83,22 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      # - name: Terraform Apply for remaining resources
-      #   working-directory: terraform
-      #   run: terraform apply -auto-approve
+  apply-remaining-resources:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Configure Terraform
+        run: |
+          echo "aws_access_key = \"AKIA4LD7OFQOTO5ZFSEU\"" > terraform/terraform.tfvars
+          echo "aws_secret_access_key = \"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\"" >> terraform/terraform.tfvars
+
+      - name: Terraform Apply for remaining resources
+        working-directory: terraform
+        run: terraform apply -auto-approve
