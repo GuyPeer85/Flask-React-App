@@ -27,7 +27,8 @@ resource "aws_security_group" "flask_react_app_sg" {
 
 # ECS Cluster
 resource "aws_ecs_cluster" "flask_react_app_cluster" {
-  name = "flask-react-app-server-side"
+  name             = "flask-react-app-server-side"
+  task_definition  = aws_ecs_task_definition.flask_react_app_task_definition.arn
 }
 
 # Task Definition
