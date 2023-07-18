@@ -102,4 +102,4 @@ jobs:
 
       - name: Get Service Public IP
         run: |
-          terraform output -raw service_ipv4
+          echo "Service IPv4: ${{ steps.apply-remaining-resources.outputs.service_ipv4 }}"
