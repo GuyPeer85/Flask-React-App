@@ -46,9 +46,13 @@ jobs:
         working-directory: terraform
         run: terraform apply -auto-approve -target=aws_ecr_repository.flask_react_app_repo_ecr
 
-      - name: Login to ECR
-        id: login-ecr
+      - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
+        with:
+          registry: 848523308061.dkr.ecr.us-east-1.amazonaws.com/flask-react-app-repo-ecr
+          region: us-east-1
+        env:
+          TERRAFORM_CLI_PATH: /home/runner/work/_temp/40094850-0c19-468c-a023-49736052691c
 
       - name: Build and Push Docker image
         id: build-image
