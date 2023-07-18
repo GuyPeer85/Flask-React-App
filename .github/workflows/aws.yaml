@@ -64,15 +64,15 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
         with:
-          registry: 848523308061.dkr.ecr.us-east-1.amazonaws.com/flask-react-app-repo-ecr
-          region: us-east-1
+          registry: 848523308061.dkr.ecr.us-east-1.amazonaws.com
+          registry-type: 'repository'
         env:
-          TERRAFORM_CLI_PATH: /home/runner/work/_temp/40094850-0c19-468c-a023-49736052691c
+          AWS_REGION: us-east-1
 
       - name: Build and Push Docker image
         id: build-image
         env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REGISTRY: 848523308061.dkr.ecr.us-east-1.amazonaws.com
           ECR_REPOSITORY: flask-react-app-repo-ecr
           IMAGE_TAG: latest
         run: |
