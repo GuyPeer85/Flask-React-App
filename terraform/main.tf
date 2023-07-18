@@ -7,7 +7,7 @@ resource "aws_security_group" "flask_react_app_sg" {
     from_port   = 0
     to_port     = 65535
     protocol    = "tcp"
-    security_groups = [aws_security_group.flask_react_app_sg.id]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
@@ -90,14 +90,18 @@ resource "aws_lb_listener" "flask_react_app_listener" {
 }
 
 # Attach Task Definition to Cluster
-resource "aws_ecs_task" "flask_react_app_task" {
-  cluster        = aws_ecs_cluster.flask_react_app_cluster.id
+resource "aws_ecs_service" "flask_react_app_service" {
+  name            = "flask-react-app-service"
+  cluster         = aws_ecs_cluster.flask_react_app_cluster.id
   task_definition = aws_ecs_task_definition.flask_react_app_task_definition.arn
-  count          = 1
-}
+  desired_count   = 1
 
-# Attach Target Group to Load Balancer
-resource "aws_lb_target_group_attachment" "flask_react_app_tg_attachment" {
-  target_group_arn = aws_lb_target_group.flask_react_app_tg.arn
-  target_id        = aws_ecs_task.flask_react_app_task[0].id
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.flask_react_app_tg.arn
+    container_name   = "flask-react-app-container"
+    container_port   = 5000
+  }
 }
