@@ -1,8 +1,3 @@
-# ECR Repository
-resource "aws_ecr_repository" "flask_react_app_repo_ecr" {
-  name = "flask-react-app-repo-ecr"
-}
-
 # EC2 Security Group
 resource "aws_security_group" "flask_react_app_sg" {
   name        = "flask-react-app-SG"

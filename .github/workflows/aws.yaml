@@ -41,7 +41,26 @@ jobs:
         run: |
           terraform init
           terraform plan
-      
-      - name: Terraform Apply
+
+      - name: Terraform Apply for ECR
+        working-directory: terraform
+        run: terraform apply -auto-approve -target=aws_ecr_repository.flask_react_app_repo_ecr
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and Push Docker image
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: flask-react-app-repo-ecr
+          IMAGE_TAG: latest
+        run: |
+          cd server
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Terraform Apply for remaining resources
         working-directory: terraform
         run: terraform apply -auto-approve
