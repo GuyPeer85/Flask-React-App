@@ -101,7 +101,5 @@ jobs:
           terraform apply -auto-approve
 
       - name: Get Service Public IP
-        shell: bash
         run: |
-          IP=$(aws ecs describe-services --cluster flask-react-app-cluster --services flask-react-app-service --query "services[0].networkConfiguration.awsvpcConfiguration.assignPublicIp" --output text)
-          echo "Public IP: $IP"
+          terraform output -raw service_ipv4
