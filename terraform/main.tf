@@ -138,3 +138,4 @@ resource "aws_ecs_service" "flask_react_app_service" {
   ]
 }
 
+
