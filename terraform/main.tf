@@ -112,8 +112,8 @@ resource "aws_service_discovery_private_dns_namespace" "flask_react_app_namespac
 resource "aws_service_discovery_service" "flask_react_app_service_discovery" {
   name            = "flask-react-app-service-discovery"
   namespace_id    = aws_service_discovery_private_dns_namespace.flask_react_app_namespace.id
-  dns_properties {
-    dns_ttl = 10
+  health_check_custom_config {
+    failure_threshold = 1
   }
 }
 
@@ -135,12 +135,6 @@ resource "aws_ecs_service" "flask_react_app_service" {
     target_group_arn = aws_lb_target_group.flask_react_app_tg.arn
     container_name   = "flask-react-app-container"
     container_port   = 5000
-  }
-
-  # Service registry configuration
-  service_registries {
-    registry_arn   = aws_service_discovery_service.flask_react_app_service_discovery.arn
-    container_port = 5000
   }
 
   depends_on = [
