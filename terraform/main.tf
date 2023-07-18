@@ -127,6 +127,12 @@ resource "aws_ecs_service" "flask_react_app_service" {
   ]
 }
 
+# EC2 Target Group Attachment
+resource "aws_lb_target_group_attachment" "flask_react_app_attachment" {
+  target_group_arn = aws_lb_target_group.flask_react_app_tg.arn
+  target_id        = aws_ecs_service.flask_react_app_service.id
+}
+
 output "server_response" {
   value = aws_lb_target_group_attachment.flask_react_app_attachment.target_id
 }
