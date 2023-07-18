@@ -23,8 +23,12 @@ jobs:
           echo "aws_access_key = \"AKIA4LD7OFQOTO5ZFSEU\"" > terraform/terraform.tfvars
           echo "aws_secret_access_key = \"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\"" >> terraform/terraform.tfvars
 
-      - name: Terraform Destroy
+      - name: Terraform Plan for Destroy
         working-directory: terraform
         run: |
           terraform init
-          terraform destroy -auto-approve
+          terraform plan -destroy
+
+      - name: Terraform Destroy
+        working-directory: terraform
+        run: terraform destroy -auto-approve
