@@ -46,9 +46,13 @@ resource "aws_ecs_task_definition" "flask_react_app_task_definition" {
       port_mappings = [
         {
           container_port = 80
+          host_port      = 80
+          protocol       = "tcp"
         },
         {
           container_port = 5000
+          host_port      = 5000
+          protocol       = "tcp"
         }
       ]
     }
