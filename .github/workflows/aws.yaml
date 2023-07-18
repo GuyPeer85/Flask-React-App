@@ -50,7 +50,7 @@ jobs:
       #     echo "::set-output name=repo_exists::${REPO_EXISTS}"
 
       - name: Terraform Apply for ECR
-        if: steps.check-ecr.outputs.repo_exists == 'null'
+        # if: steps.check-ecr.outputs.repo_exists == 'null'
         working-directory: terraform/ecr/
         run: terraform apply -auto-approve -var="create_ecr_repository=true"
 
