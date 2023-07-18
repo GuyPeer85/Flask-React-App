@@ -112,9 +112,6 @@ resource "aws_service_discovery_private_dns_namespace" "flask_react_app_namespac
 resource "aws_service_discovery_service" "flask_react_app_service_discovery" {
   name            = "flask-react-app-service-discovery"
   namespace_id    = aws_service_discovery_private_dns_namespace.flask_react_app_namespace.id
-  health_check_custom_config {
-    failure_threshold = 1
-  }
 }
 
 # ECS Service with desired_count = 0
@@ -137,8 +134,17 @@ resource "aws_ecs_service" "flask_react_app_service" {
     container_port   = 5000
   }
 
+  service_registries {
+    registry_arn   = aws_service_discovery_service.flask_react_app_service_discovery.arn
+    container_port = 5000
+  }
+
   depends_on = [
     aws_lb_listener.flask_react_app_listener_80,
     aws_lb_listener.flask_react_app_listener_5000
   ]
+}
+
+output "service_ipv4" {
+  value = aws_ecs_service.flask_react_app_service.service_registries[0].service_ipv4
 }
