@@ -18,10 +18,10 @@ resource "aws_security_group" "flask_react_app_sg" {
   }
 
   ingress {
-    from_port   = 0
-    to_port     = 65535
-    protocol    = "tcp"
-    source_security_group_id = aws_security_group.flask_react_app_sg.id
+    from_port        = 0
+    to_port          = 65535
+    protocol         = "tcp"
+    security_groups = [aws_security_group.flask_react_app_sg.id]
   }
 
   ingress {
@@ -86,22 +86,5 @@ resource "aws_lb_listener" "flask_react_app_listener" {
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.flask_react_app_tg.arn
-  }
-}
-
-# Attach Task Definition to Cluster
-resource "aws_ecs_service" "flask_react_app_service" {
-  name            = "flask-react-app-service"
-  cluster         = aws_ecs_cluster.flask_react_app_cluster.id
-  task_definition = aws_ecs_task_definition.flask_react_app_task_definition.arn
-  desired_count   = 1
-
-  deployment_minimum_healthy_percent = 100
-  deployment_maximum_percent         = 200
-
-  load_balancer {
-    target_group_arn = aws_lb_target_group.flask_react_app_tg.arn
-    container_name   = "flask-react-app-container"
-    container_port   = 5000
   }
 }
