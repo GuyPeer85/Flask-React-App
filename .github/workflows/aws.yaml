@@ -99,8 +99,3 @@ jobs:
         run: |
           terraform init 
           terraform apply -auto-approve
-
-      - name: Print Server Response
-        run: |
-          echo "Server Response:"
-          echo "${{ steps.apply-remaining-resources.outputs.server_response }}"
