@@ -37,7 +37,7 @@ jobs:
           echo "aws_secret_access_key = \"jfpauoBBylngKIC51gmkJzlEIJ+a35c0RIFVEhFW\"" >> terraform/terraform.tfvars
 
       - name: Terraform Plan
-        working-directory: terraform
+        working-directory: terraform/ecr/
         run: |
           terraform init
           terraform plan
@@ -45,7 +45,6 @@ jobs:
       - name: Terraform Apply for ECR
         working-directory: terraform/ecr/
         run: |
-          terraform init
           terraform apply -auto-approve -var="create_ecr_repository=true"
 
   build-and-push:
@@ -100,3 +99,15 @@ jobs:
         run: |
           terraform init 
           terraform apply -auto-approve
+
+      - name: Retrieve ECS service public IP
+        id: get-service-ip
+        run: |
+          service_ip=$(aws ecs describe-services --cluster <cluster-name> --services <service-name> --query "services[0].networkConfiguration.awsvpcConfiguration.assignPublicIp" --output text)
+          echo "::set-output name=service_ip::$service_ip"
+
+      - name: Send HTTP request to ECS service
+        run: |
+          service_ip=$(/bin/bash -c "echo ${{ steps.get-service-ip.outputs.service_ip }}")
+          response=$(curl -s "http://$service_ip:5000/api/message")
+          echo "Response from ECS service: $response"
