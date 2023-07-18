@@ -3,33 +3,35 @@ resource "aws_security_group" "flask_react_app_sg" {
   name        = "flask-react-app-SG"
   description = "flask-react-app-SG"
 
-  ingress {
-    from_port   = 0
-    to_port     = 65535
-    protocol    = "tcp"
+  egress {
     cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    self = true
   }
 
-  ingress {
-    from_port        = 0
-    to_port          = 65535
-    protocol         = "tcp"
-    security_groups = [aws_security_group.flask_react_app_sg.id]
-  }
+  
+ingress {
+  from_port   = 0
+  to_port     = 65535
+  protocol    = "tcp"
+  security_groups = ["sg-011947a6326ed4e23"]
+}
 
-  ingress {
-    from_port   = 0
-    to_port     = 65535
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+ingress {
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
+  security_groups = ["sg-011947a6326ed4e23"]
+}
+
+ingress {
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
 }
 
 # ECS Cluster
@@ -51,6 +53,11 @@ resource "aws_ecs_task_definition" "flask_react_app_task_definition" {
       "name": "flask-react-app-container",
       "image": "848523308061.dkr.ecr.us-east-1.amazonaws.com/flask-react-app-repo-ecr:latest",
       "portMappings": [
+        {
+          "containerPort": 80,
+          "hostPort": 80,
+          "protocol": "tcp"
+        },
         {
           "containerPort": 5000,
           "hostPort": 5000,
@@ -86,5 +93,14 @@ resource "aws_lb_listener" "flask_react_app_listener" {
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.flask_react_app_tg.arn
+  }
+}
+
+
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.flask_react_app_tg.arn
+    container_name   = "flask-react-app-container"
+    container_port   = 5000
   }
 }
