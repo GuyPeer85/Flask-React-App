@@ -112,17 +112,19 @@ resource "aws_ecs_task" "flask_react_app_task" {
   }
 }
 
-# ECS Service with desired_count = 0
+# ECS Service
 resource "aws_ecs_service" "flask_react_app_service" {
   name            = "flask-react-app-service"
   cluster         = aws_ecs_cluster.flask_react_app_cluster.id
   task_definition = aws_ecs_task_definition.flask_react_app_task_definition.arn
   desired_count   = 0
-  launch_type     = "FARGATE"
+
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
 
   network_configuration {
-    subnets          = ["subnet-012ef49073ec21b34", "subnet-018a531e030fc761b", "subnet-0ed855ff1f7d5fb61", "subnet-09f48fe3de3534711", "subnet-0ebda44417a1904a9", "subnet-0b0fc1ed5fa23a11b"]
-    security_groups  = [aws_security_group.flask_react_app_sg.id]
+    subnets         = ["subnet-012ef49073ec21b34", "subnet-018a531e030fc761b", "subnet-0ed855ff1f7d5fb61", "subnet-09f48fe3de3534711", "subnet-0ebda44417a1904a9", "subnet-0b0fc1ed5fa23a11b"]
+    security_groups = [aws_security_group.flask_react_app_sg.id]
     assign_public_ip = true
   }
 
