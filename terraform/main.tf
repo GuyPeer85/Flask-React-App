@@ -137,3 +137,4 @@ resource "aws_ecs_service" "flask_react_app_service" {
     aws_lb_listener.flask_react_app_listener_5000
   ]
 }
+
