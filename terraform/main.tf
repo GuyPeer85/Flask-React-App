@@ -27,18 +27,17 @@ resource "aws_security_group" "flask_react_app_sg" {
 
 # ECS Cluster
 resource "aws_ecs_cluster" "flask_react_app_cluster" {
-  name             = "flask-react-app-server-side"
-  task_definition  = aws_ecs_task_definition.flask_react_app_task_definition.arn
+  name = "flask-react-app-server-side"
 }
 
 # Task Definition
 resource "aws_ecs_task_definition" "flask_react_app_task_definition" {
-  family                = "flask-react-app-task-family"
-  cpu                   = "256"
-  memory                = "512"
-  network_mode          = "awsvpc"
+  family                   = "flask-react-app-task-family"
+  cpu                      = "256"
+  memory                   = "512"
+  network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  execution_role_arn    = "arn:aws:iam::848523308061:role/ecsTaskExecutionRole"
+  execution_role_arn       = "arn:aws:iam::848523308061:role/ecsTaskExecutionRole"
 
   container_definitions = jsonencode([
     {
@@ -81,5 +80,22 @@ resource "aws_lb_listener" "flask_react_app_listener" {
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.flask_react_app_tg.arn
+  }
+}
+
+# ECS Service
+resource "aws_ecs_service" "flask_react_app_service" {
+  name            = "flask-react-app-service"
+  cluster         = aws_ecs_cluster.flask_react_app_cluster.id
+  task_definition = aws_ecs_task_definition.flask_react_app_task_definition.arn
+  desired_count   = 1
+
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.flask_react_app_tg.arn
+    container_name   = "flask-react-app-container"
+    container_port   = 80
   }
 }
