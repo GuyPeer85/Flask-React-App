@@ -101,6 +101,22 @@ resource "aws_lb_listener" "flask_react_app_listener_5000" {
   }
 }
 
+# Service Discovery Private DNS Namespace
+resource "aws_servicediscovery_private_dns_namespace" "flask_react_app_namespace" {
+  name        = "flask-react-app-namespace"
+  description = "Private DNS namespace for flask-react-app"
+  vpc         = "vpc-08d9d0b1dc4b47d41"
+}
+
+# Service Discovery Service
+resource "aws_servicediscovery_service" "flask_react_app_service_discovery" {
+  name            = "flask-react-app-service-discovery"
+  namespace_id    = aws_servicediscovery_private_dns_namespace.flask_react_app_namespace.id
+  dns_properties {
+    dns_ttl = 10
+  }
+}
+
 # ECS Service with desired_count = 0
 resource "aws_ecs_service" "flask_react_app_service" {
   name            = "flask-react-app-service"
