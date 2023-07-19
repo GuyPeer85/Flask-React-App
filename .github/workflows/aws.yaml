@@ -104,4 +104,5 @@ jobs:
         id: set_alb_dns_name
         working-directory: terraform
         run: |
-          echo "ALB_DNS_NAME=$(terraform output -raw flask_react_app_alb_dns)" >> $GITHUB_ENV
+          ALB_DNS_NAME=$(terraform output -raw flask_react_app_alb_dns)
+          echo "::set-env name=ALB_DNS_NAME::$ALB_DNS_NAME"
