@@ -100,6 +100,11 @@ jobs:
           terraform init 
           terraform apply -auto-approve
 
+      - name: Check ALB DNS Name output
+        working-directory: terraform
+        run: |
+          terraform output -raw flask_react_app_alb_dns
+
       - name: Set ALB DNS Name
         id: set_alb_dns_name
         working-directory: terraform
