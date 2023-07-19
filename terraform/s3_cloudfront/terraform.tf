@@ -1,10 +1,6 @@
-# S3 Bucket
 resource "aws_s3_bucket" "bucket" {
   bucket = "guypeer1985"
-
-  lifecycle {
-    prevent_destroy = false
-  }
+  acl    = "public-read"
 
   website {
     index_document = "index.html"
@@ -12,35 +8,26 @@ resource "aws_s3_bucket" "bucket" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "access_block" {
-  bucket = aws_s3_bucket.bucket.id
+data "aws_iam_policy_document" "bucket_policy" {
+  statement {
+    sid    = "PublicReadGetObject"
+    effect = "Allow"
 
-  block_public_acls   = false
-  ignore_public_acls  = false
-  block_public_policy = false
-  restrict_public_buckets = false
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+
+    actions   = ["s3:GetObject"]
+    resources = ["arn:aws:s3:::guypeer1985/*"]
+  }
 }
 
 resource "aws_s3_bucket_policy" "bucket_policy" {
   bucket = aws_s3_bucket.bucket.id
-
-  policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-      {
-          "Sid": "PublicReadGetObject",
-          "Effect": "Allow",
-          "Principal": "*",
-          "Action": "s3:GetObject",
-          "Resource": "arn:aws:s3:::${aws_s3_bucket.bucket.id}/*"
-      }
-  ]
-}
-POLICY
+  policy = data.aws_iam_policy_document.bucket_policy.json
 }
 
-# Cloudfront Distributor
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
     domain_name = aws_s3_bucket.bucket.website_endpoint
@@ -55,6 +42,8 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   enabled             = true
+  is_ipv6_enabled     = true
+  comment             = "Cloudfront Distribution pointing to S3 bucket"
   default_root_object = "index.html"
 
   default_cache_behavior {
@@ -64,27 +53,26 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
     forwarded_values {
       query_string = false
+      headers      = ["*"]
 
       cookies {
         forward = "none"
       }
     }
 
-    viewer_protocol_policy = "allow-all"
+    viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
     default_ttl            = 3600
     max_ttl                = 86400
   }
 
-  price_class = "PriceClass_100"
+  viewer_certificate {
+    cloudfront_default_certificate = true
+  }
 
   restrictions {
     geo_restriction {
       restriction_type = "none"
     }
-  }
-
-  viewer_certificate {
-    cloudfront_default_certificate = true
   }
 }
