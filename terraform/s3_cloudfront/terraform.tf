@@ -25,14 +25,17 @@ POLICY
   website {
     index_document = "index.html"
   }
-
-  public_access_block_configuration {
-    block_public_acls   = false
-    ignore_public_acls  = false
-    block_public_policy = true
-    restrict_public_buckets = true
-  }
 }
+
+resource "aws_s3_bucket_public_access_block" "access_block" {
+  bucket = aws_s3_bucket.bucket.id
+
+  block_public_acls   = false
+  ignore_public_acls  = false
+  block_public_policy = false
+  restrict_public_buckets = false
+}
+
 
 # Cloudfront Distributor
 resource "aws_cloudfront_distribution" "s3_distribution" {
