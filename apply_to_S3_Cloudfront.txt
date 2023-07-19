@@ -1,0 +1,17 @@
+bucket_name=alex-home-hands-on
+region=us-east-1
+bucket_policy={
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicReadGetObject",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::alex-home-hands-on/*"
+    }
+  ]
+}
+index_document=index.html
+cloudfront_origin_domain_name=The S3 bucket's website endpoint
+viewer_protocol_policy=redirect-to-https

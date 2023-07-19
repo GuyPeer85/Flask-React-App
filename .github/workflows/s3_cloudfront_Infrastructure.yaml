@@ -1,8 +1,11 @@
 name: Apply s3 cloudfront Infrastructure
 on:
   workflow_dispatch:
-  branches:
+  push:
+    branches:
       - aws
+    paths:
+      - 'apply_to_S3_Cloudfront.txt'
       
 jobs:
   apply:
