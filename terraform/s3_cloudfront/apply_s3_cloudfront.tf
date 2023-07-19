@@ -19,12 +19,17 @@ POLICY
 }
 
 resource "aws_s3_bucket_website_configuration" "website" {
-  bucket               = aws_s3_bucket.bucket.id
-  index_document       = "index.html"
-  error_document       = "error.html"
-  redirect_all_requests_to {
-    host_name = ""
-    protocol  = "https"
+  bucket = aws_s3_bucket.bucket.id
+
+  routing_rules {
+    condition {
+      key_prefix_equals = "/"
+    }
+    redirect {
+      host_name = ""
+      protocol  = "https"
+      replace_key_prefix_with = "index.html"
+    }
   }
 }
 
