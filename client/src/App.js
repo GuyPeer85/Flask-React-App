@@ -8,7 +8,7 @@ function App() {
     fetch(`${process.env.REACT_APP_ALB_DNS_NAME}:5000/api/message`)
       .then(response => response.json())
       .then(data => {
-        console.log("Received response:", data); // Log the response
+        console.log("Received response:", data); // Log the response 
         setMessage(data.message);
       });
   }, []);
