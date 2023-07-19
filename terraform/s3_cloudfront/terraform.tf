@@ -10,8 +10,6 @@ resource "aws_s3_bucket" "bucket" {
     index_document = "index.html"
     error_document = "error.html"
   }
-
-  object_ownership = "BucketOwnerEnforced"
 }
 
 resource "aws_s3_bucket_public_access_block" "access_block" {
