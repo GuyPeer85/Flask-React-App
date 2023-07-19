@@ -1,7 +1,6 @@
 # S3 Bucket
 resource "aws_s3_bucket" "bucket" {
   bucket = "alex-home-hands-on"
-  acl    = "public-read"
 
   policy = <<POLICY
 {
@@ -17,9 +16,15 @@ resource "aws_s3_bucket" "bucket" {
   ]
 }
 POLICY
+}
 
-  website {
-    index_document = "index.html"
+resource "aws_s3_bucket_website_configuration" "website" {
+  bucket               = aws_s3_bucket.bucket.id
+  index_document       = "index.html"
+  error_document       = "error.html"
+  redirect_all_requests_to {
+    host_name = ""
+    protocol  = "https"
   }
 }
 
