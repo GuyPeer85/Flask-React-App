@@ -16,22 +16,6 @@ resource "aws_s3_bucket" "bucket" {
   ]
 }
 POLICY
-
-  lifecycle {
-    prevent_destroy = false
-  }
-}
-
-# Add this destroy block to handle deletion
-resource "aws_s3_bucket" "existing_bucket" {
-  bucket = "alex-home-hands-on"
-  force_destroy = true
-
-  lifecycle {
-    prevent_destroy = false
-  }
-
-  depends_on = [aws_s3_bucket.bucket]
 }
 
 resource "aws_s3_bucket_website_configuration" "website" {
