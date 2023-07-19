@@ -1,4 +1,4 @@
-name: Apply Infrastructure
+name: Apply s3 cloudfront Infrastructure
 on:
   workflow_dispatch:
 jobs:
