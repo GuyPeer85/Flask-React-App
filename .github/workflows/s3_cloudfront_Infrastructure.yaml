@@ -34,7 +34,6 @@ jobs:
       working-directory: terraform/s3_cloudfront/
       run: |
         terraform init
-        terraform plan
 
     - name: Terraform Apply
       working-directory: terraform/s3_cloudfront/
