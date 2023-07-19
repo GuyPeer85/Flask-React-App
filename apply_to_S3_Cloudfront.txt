@@ -14,4 +14,4 @@ bucket_policy={
 }
 index_document=index.html
 cloudfront_origin_domain_name=The S3 bucket's webs ite endpoint
-viewer_protocol_policy=redirect-to-https      
+viewer_protocol_policy=redirect-to-https       
