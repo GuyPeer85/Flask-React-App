@@ -1,38 +1,43 @@
 # S3 Bucket
 resource "aws_s3_bucket" "bucket" {
-  bucket = "guypeer1985"  // Replace this with a unique bucket name
+  bucket = "guypeer1985"
+  acl    = "public-read"
+
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+          "Sid": "PublicReadGetObject",
+          "Effect": "Allow",
+          "Principal": "*",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::guypeer1985/*"
+      }
+  ]
+}
+POLICY
+
+  lifecycle {
+    prevent_destroy = false
+  }
 
   website {
     index_document = "index.html"
   }
 
-  lifecycle {
-    prevent_destroy = false
+  public_access_block_configuration {
+    block_public_acls   = false
+    ignore_public_acls  = false
+    block_public_policy = true
+    restrict_public_buckets = true
   }
-}
-
-# Bucket Policy
-resource "aws_s3_bucket_policy" "bucket_policy" {
-  bucket = aws_s3_bucket.bucket.id
-
-  policy = jsonencode({
-    "Version" : "2012-10-17",
-    "Statement" : [
-      {
-        "Sid" : "PublicReadGetObject",
-        "Effect" : "Allow",
-        "Principal" : "*",
-        "Action" : "s3:GetObject",
-        "Resource" : "arn:aws:s3:::${aws_s3_bucket.bucket.id}/*"
-      }
-    ]
-  })
 }
 
 # Cloudfront Distributor
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
-    domain_name = aws_s3_bucket.bucket.bucket_regional_domain_name
+    domain_name = aws_s3_bucket.bucket.website_endpoint
     origin_id   = "S3Origin"
   }
 
