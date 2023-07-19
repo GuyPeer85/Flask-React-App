@@ -1,22 +1,6 @@
 # S3 Bucket
 resource "aws_s3_bucket" "bucket" {
   bucket = "guypeer1985"
-  acl    = "public-read"
-
-  policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-      {
-          "Sid": "PublicReadGetObject",
-          "Effect": "Allow",
-          "Principal": "*",
-          "Action": "s3:GetObject",
-          "Resource": "arn:aws:s3:::guypeer1985/*"
-      }
-  ]
-}
-POLICY
 
   lifecycle {
     prevent_destroy = false
@@ -24,7 +8,10 @@ POLICY
 
   website {
     index_document = "index.html"
+    error_document = "error.html"
   }
+
+  object_ownership = "BucketOwnerEnforced"
 }
 
 resource "aws_s3_bucket_public_access_block" "access_block" {
@@ -36,6 +23,24 @@ resource "aws_s3_bucket_public_access_block" "access_block" {
   restrict_public_buckets = false
 }
 
+resource "aws_s3_bucket_policy" "bucket_policy" {
+  bucket = aws_s3_bucket.bucket.id
+
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+          "Sid": "PublicReadGetObject",
+          "Effect": "Allow",
+          "Principal": "*",
+          "Action": "s3:GetObject",
+          "Resource": "arn:aws:s3:::${aws_s3_bucket.bucket.id}/*"
+      }
+  ]
+}
+POLICY
+}
 
 # Cloudfront Distributor
 resource "aws_cloudfront_distribution" "s3_distribution" {
