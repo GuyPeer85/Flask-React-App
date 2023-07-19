@@ -1,52 +1,32 @@
 # S3 Bucket
 resource "aws_s3_bucket" "bucket" {
-  bucket = "alex-home-hands-on"
+  bucket = "guypeer1985"  // Replace this with a unique bucket name
 
-  policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-      {
-          "Sid": "PublicReadGetObject",
-          "Effect": "Allow",
-          "Principal": "*",
-          "Action": "s3:GetObject",
-          "Resource": "arn:aws:s3:::alex-home-hands-on/*"
-      }
-  ]
-}
-POLICY
+  website {
+    index_document = "index.html"
+  }
 
   lifecycle {
     prevent_destroy = false
   }
 }
 
-# Add this destroy block to handle deletion
-resource "aws_s3_bucket" "existing_bucket" {
-  bucket = "alex-home-hands-on"
-  force_destroy = true
-
-  lifecycle {
-    prevent_destroy = false
-  }
-
-  depends_on = [aws_s3_bucket.bucket]
-}
-
-resource "aws_s3_bucket_website_configuration" "website" {
+# Bucket Policy
+resource "aws_s3_bucket_policy" "bucket_policy" {
   bucket = aws_s3_bucket.bucket.id
 
-  routing_rule {
-    condition {
-      key_prefix_equals = "/"
-    }
-    redirect {
-      host_name               = ""
-      protocol                = "https"
-      replace_key_prefix_with = "index.html"
-    }
-  }
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Sid" : "PublicReadGetObject",
+        "Effect" : "Allow",
+        "Principal" : "*",
+        "Action" : "s3:GetObject",
+        "Resource" : "arn:aws:s3:::${aws_s3_bucket.bucket.id}/*"
+      }
+    ]
+  })
 }
 
 # Cloudfront Distributor
@@ -86,5 +66,3 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     cloudfront_default_certificate = true
   }
 }
-
-
