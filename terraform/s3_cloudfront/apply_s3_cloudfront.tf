@@ -17,10 +17,12 @@ resource "aws_s3_bucket" "bucket" {
   ]
 }
 POLICY
+}
 
-  website {
-    index_document = "index.html"
-  }
+resource "aws_s3_bucket_website" "website" {
+  bucket = aws_s3_bucket.bucket.id
+
+  index_document = "index.html"
 }
 
 # Cloudfront Distributor
