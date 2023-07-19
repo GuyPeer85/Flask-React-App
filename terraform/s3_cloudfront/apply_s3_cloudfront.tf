@@ -21,13 +21,13 @@ POLICY
 resource "aws_s3_bucket_website_configuration" "website" {
   bucket = aws_s3_bucket.bucket.id
 
-  routing_rules {
+  routing_rule {
     condition {
       key_prefix_equals = "/"
     }
     redirect {
-      host_name = ""
-      protocol  = "https"
+      host_name               = ""
+      protocol                = "https"
       replace_key_prefix_with = "index.html"
     }
   }
