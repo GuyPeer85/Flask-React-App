@@ -1,6 +1,9 @@
 name: Apply s3 cloudfront Infrastructure
 on:
   workflow_dispatch:
+  branches:
+      - aws
+      
 jobs:
   apply:
     name: Apply
