@@ -130,5 +130,5 @@ resource "aws_ecs_service" "flask_react_app_service" {
 
 output "flask_react_app_alb_dns" {
   description = "The DNS name of the ALB."
-  value       = aws_lb.flask_react_app_alb.dns_name
+  value       = aws_lb.flask_react_app_alb[0].dns_name
 }
