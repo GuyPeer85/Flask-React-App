@@ -72,7 +72,7 @@ resource "aws_lb_target_group" "flask_react_app_tg" {
 
 # EC2 Application Load Balancer
 resource "aws_lb" "flask_react_app_alb" {
-  count = 1
+  count            = 1
   name             = "flask-react-app-ALB"
   subnets          = ["subnet-012ef49073ec21b34", "subnet-018a531e030fc761b", "subnet-0ed855ff1f7d5fb61", "subnet-09f48fe3de3534711", "subnet-0ebda44417a1904a9", "subnet-0b0fc1ed5fa23a11b"]
   security_groups  = [aws_security_group.flask_react_app_sg.id]
@@ -80,7 +80,7 @@ resource "aws_lb" "flask_react_app_alb" {
 
 # ALB Listener for port 80
 resource "aws_lb_listener" "flask_react_app_listener_80" {
-  load_balancer_arn = aws_lb.flask_react_app_alb.arn
+  load_balancer_arn = aws_lb.flask_react_app_alb[count.index].arn
   port              = 80
   protocol          = "HTTP"
 
@@ -92,7 +92,7 @@ resource "aws_lb_listener" "flask_react_app_listener_80" {
 
 # ALB Listener for port 5000
 resource "aws_lb_listener" "flask_react_app_listener_5000" {
-  load_balancer_arn = aws_lb.flask_react_app_alb.arn
+  load_balancer_arn = aws_lb.flask_react_app_alb[count.index].arn
   port              = 5000
   protocol          = "HTTP"
 
@@ -130,5 +130,5 @@ resource "aws_ecs_service" "flask_react_app_service" {
 
 output "flask_react_app_alb_dns" {
   description = "The DNS name of the ALB."
-  value       = aws_lb.flask_react_app_alb.dns_name
+  value       = aws_lb.flask_react_app_alb[count.index].dns_name
 }
