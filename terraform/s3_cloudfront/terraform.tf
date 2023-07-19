@@ -47,7 +47,7 @@ resource "aws_cloudfront_origin_access_identity" "oai" {
 
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
-    domain_name = aws_s3_bucket.bucket.bucket_regional_domain_name
+    domain_name = aws_s3_bucket.bucket.website_endpoint
     origin_id   = "S3Origin"
 
     s3_origin_config {
