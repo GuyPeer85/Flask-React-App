@@ -80,7 +80,7 @@ resource "aws_lb" "flask_react_app_alb" {
 
 # ALB Listener for port 80
 resource "aws_lb_listener" "flask_react_app_listener_80" {
-  load_balancer_arn = aws_lb.flask_react_app_alb[count.index].arn
+  load_balancer_arn = aws_lb.flask_react_app_alb[0].arn
   port              = 80
   protocol          = "HTTP"
 
@@ -92,7 +92,7 @@ resource "aws_lb_listener" "flask_react_app_listener_80" {
 
 # ALB Listener for port 5000
 resource "aws_lb_listener" "flask_react_app_listener_5000" {
-  load_balancer_arn = aws_lb.flask_react_app_alb[count.index].arn
+  load_balancer_arn = aws_lb.flask_react_app_alb[0].arn
   port              = 5000
   protocol          = "HTTP"
 
@@ -130,5 +130,5 @@ resource "aws_ecs_service" "flask_react_app_service" {
 
 output "flask_react_app_alb_dns" {
   description = "The DNS name of the ALB."
-  value       = aws_lb.flask_react_app_alb[count.index].dns_name
+  value       = aws_lb.flask_react_app_alb.dns_name
 }
