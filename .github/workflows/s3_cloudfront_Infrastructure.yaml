@@ -31,9 +31,11 @@ jobs:
         terraform_version: 0.14.9
 
     - name: Terraform Init
-      working-directory: terraform
-      run: apply_s3_cloudfront init
+      working-directory: terraform/s3_cloudfront/
+      run: |
+        terraform init
+        terraform plan
 
     - name: Terraform Apply
-      working-directory: terraform
-      run: apply_s3_cloudfront apply -auto-approve
+      working-directory: terraform/s3_cloudfront/
+      run: terraform apply -auto-approve
