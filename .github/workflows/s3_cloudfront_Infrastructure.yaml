@@ -32,8 +32,8 @@ jobs:
 
     - name: Terraform Init
       working-directory: terraform
-      run: terraform init
+      run: apply_s3_cloudfront init
 
     - name: Terraform Apply
       working-directory: terraform
-      run: terraform apply -auto-approve
+      run: apply_s3_cloudfront apply -auto-approve
