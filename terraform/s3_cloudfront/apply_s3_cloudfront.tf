@@ -1,9 +1,4 @@
-provider "aws" {
-  region     = "us-east-1"
-  access_key = "<AWS_ACCESS_KEY>"
-  secret_key = "<AWS_SECRET_KEY>"
-}
-
+# S3 Bucket
 resource "aws_s3_bucket" "bucket" {
   bucket = "alex-home-hands-on"
   acl    = "public-read"
@@ -28,6 +23,7 @@ POLICY
   }
 }
 
+# Cloudfront Distributor
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
     domain_name = aws_s3_bucket.bucket.bucket_regional_domain_name
