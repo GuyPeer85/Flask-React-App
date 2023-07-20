@@ -24,9 +24,6 @@ jobs:
       
       - name: Verify Server Deployment
         run: curl -sSf "http://172.18.0.3:5000/api/message"
-<<<<<<< HEAD
-=======
 
       - name: Waiting for 40 seconds
         run: sleep 40
->>>>>>> 20456e62decb2a5dd72556a2eab40104e142a0c7

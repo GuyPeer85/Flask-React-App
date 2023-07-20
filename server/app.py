@@ -18,11 +18,8 @@ logger.addHandler(file_handler)
 @app.route('/api/message', methods=['GET'])
 def home():
     logger.info('Received request for /api/message')
-<<<<<<< HEAD
-    return jsonify({"message": "Hello from server! on AWS 1"}), 200
-=======
     return jsonify({"message": "Hello from server! on postman"}), 200
->>>>>>> 20456e62decb2a5dd72556a2eab40104e142a0c7
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
