@@ -25,7 +25,9 @@ The main objective of this project is to demonstrate a fully functional CI/CD pi
 - Node.js and npm (for ReactJS)
 
 Start Minikube:
+
 `minikube start --driver=docker`
+
 `minikube addons enable ingress`
 
 **Configuring Dockerhub credentials:**
