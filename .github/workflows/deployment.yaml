@@ -37,14 +37,12 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Docker image (Server)
-        if: startsWith(github.event_path, 'server/')
         run: |
           cd server
           docker build -t guypeeril/k8s-server-python .
           docker push guypeeril/k8s-server-python
 
       - name: Build and push Docker image (Client)
-        if: startsWith(github.event_path, 'client/')
         run: |
           cd client
           docker build -t guypeeril/k8s-client-build .
@@ -71,7 +69,7 @@ jobs:
       - name: Port forward to server pod
         run: |
           kubectl port-forward ${{ env.SERVER_POD_NAME }} 5000:5000 &
-          sleep 20
+          sleep 30
 
       - name: Test server endpoint
         run: curl http://127.0.0.1:5000/api/message
