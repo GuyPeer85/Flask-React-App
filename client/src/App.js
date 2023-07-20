@@ -5,7 +5,7 @@ function App() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    fetch('http://rt-dev.xyz:5000/api/message')
+    fetch('${{ env.SERVER_URL }}/api/message')
       .then(response => response.json())
       .then(data => {
         console.log("Received response:", data); // Log the response

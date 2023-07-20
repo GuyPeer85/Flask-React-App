@@ -1,0 +1,76 @@
+name: Deploy to Kubernetes
+
+on:
+  push:
+    branches:
+      - k8s
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Minikube
+        run: |
+          curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+          chmod +x minikube
+          sudo install minikube /usr/local/bin/
+
+      - name: Set up Minikube
+        run: |
+          minikube start --driver=docker
+          minikube addons enable ingress
+
+      - name: Install yq
+        run: |
+          sudo add-apt-repository ppa:rmescandon/yq -y
+          sudo apt update -y
+          sudo apt install yq -y
+
+      - name: Log in to Docker
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image (Server)
+        if: github.event_path | contains('server')
+        run: |
+          cd server
+          docker build -t guypeeril/k8s-server-python .
+          docker push guypeeril/k8s-server-python
+
+      - name: Build and push Docker image (Client)
+        if: github.event_path | contains('client')
+        run: |
+          cd client
+          docker build -t guypeeril/k8s-client-build .
+          docker push guypeeril/k8s-client-build
+
+      - name: Configure kubectl
+        run: |
+          minikube update-context
+
+      - name: Apply Kubernetes deployment
+        run: kubectl apply -f app-deployment.yaml
+
+      - name: Get server pod name
+        run: |
+          kubectl get pods -l app=server -o jsonpath="{.items[0].metadata.name}" > server-pod-name.txt
+
+      - name: Port forward to server
+        run: |
+          pod_name=$(cat server-pod-name.txt)
+          kubectl port-forward "$pod_name" 5000:5000 &
+
+      - name: Wait for port forwarding to start
+        run: sleep 5
+
+      - name: Test server endpoint
+        run: curl http://localhost:5000/api/message
+
+      - name: Display Minikube IP
+        run: minikube IP

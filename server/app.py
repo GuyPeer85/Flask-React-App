@@ -18,7 +18,7 @@ logger.addHandler(file_handler)
 @app.route('/', methods=['GET'])
 def root():
     logger.info('Received request for /')
-    return jsonify({"message": "Hello from root!"}), 200
+    return jsonify({"message": "Hello from root!!!!"}), 200
 
 @app.route('/api/message', methods=['GET'])
 def home():
