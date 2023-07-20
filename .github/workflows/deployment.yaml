@@ -64,14 +64,11 @@ jobs:
 
       - name: Port forward to server pod
         run: |
-          pod_name=${{ env.SERVER_POD_NAME }}
-          kubectl exec -it $pod_name -- sh -c "kubectl port-forward $pod_name 5000:5000" &
+          kubectl port-forward ${{ env.SERVER_POD_NAME }} 5000:5000 &
           sleep 5
 
       - name: Wait for port forwarding to start
-        run: |
-          sleep 5
-          kubectl logs $pod_name
+        run: sleep 5
 
       - name: Test server endpoint
         run: curl http://127.0.0.1:5000/api/message
