@@ -23,7 +23,7 @@ def root():
 @app.route('/api/message', methods=['GET'])
 def home():
     logger.info('Received request for /api/message')
-    return jsonify({"message": "Hello from server!"}), 200
+    return jsonify({"message": "Hello from server! final call"}), 200
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
