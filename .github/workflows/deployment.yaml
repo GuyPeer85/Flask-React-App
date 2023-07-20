@@ -70,7 +70,7 @@ jobs:
         run: sleep 5
 
       - name: Test server endpoint
-        run: curl http://localhost:5000/api/message
+        run: curl http://127.0.0.1:5000/api/message
 
       - name: Display Minikube IP
         run: minikube IP
