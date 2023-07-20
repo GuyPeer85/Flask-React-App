@@ -59,13 +59,14 @@ jobs:
 
       - name: Get server pod name
         run: |
-          kubectl get pods -l app=server -o jsonpath="{.items[0].metadata.name}" > server-pod-name.txt
-          cat server-pod-name.txt
+          pod_name=$(kubectl get pods -l app=server -o jsonpath="{.items[0].metadata.name}")
+          echo "SERVER_POD_NAME=$pod_name" >> $GITHUB_ENV
 
-      - name: Port forward to server
+      - name: Port forward to server pod
         run: |
-          pod_name=$(cat server-pod-name.txt)
-          kubectl port-forward "$pod_name" 5000:5000 &
+          pod_name=${{ env.SERVER_POD_NAME }}
+          kubectl exec -it $pod_name -- sh -c "kubectl port-forward $pod_name 5000:5000" &
+          sleep 5
 
       - name: Wait for port forwarding to start
         run: sleep 5
