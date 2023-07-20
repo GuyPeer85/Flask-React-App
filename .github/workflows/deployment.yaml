@@ -69,7 +69,9 @@ jobs:
           sleep 5
 
       - name: Wait for port forwarding to start
-        run: sleep 5
+        run: |
+        sleep 5
+        kubectl logs $pod_name
 
       - name: Test server endpoint
         run: curl http://127.0.0.1:5000/api/message
