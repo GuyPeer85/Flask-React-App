@@ -69,15 +69,15 @@ jobs:
       - name: Port forward to server pod
         run: |
           kubectl port-forward ${{ env.SERVER_POD_NAME }} 5000:5000 &
-          sleep 30
-
-      - name: Test server endpoint
-        run: curl http://127.0.0.1:5000/api/message
+          sleep 40
 
       - name: Display Minikube IP
         run: |
           minikube ip
           kubectl get all
+
+      - name: Test server endpoint
+        run: curl http://127.0.0.1:5000/api/message
       
       - name: Test client service
         run: |
