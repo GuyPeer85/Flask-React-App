@@ -37,14 +37,14 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Docker image (Server)
-        if: github.event_path | contains('server')
+        if: startsWith(github.event_path, 'server/')
         run: |
           cd server
           docker build -t guypeeril/k8s-server-python .
           docker push guypeeril/k8s-server-python
 
       - name: Build and push Docker image (Client)
-        if: github.event_path | contains('client')
+        if: startsWith(github.event_path, 'client/')
         run: |
           cd client
           docker build -t guypeeril/k8s-client-build .
