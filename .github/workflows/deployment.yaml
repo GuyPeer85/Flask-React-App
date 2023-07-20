@@ -77,7 +77,9 @@ jobs:
         run: curl http://127.0.0.1:5000/api/message
 
       - name: Display Minikube IP
-        run: minikube ip
+        run: |
+          minikube ip
+          kubectl get all
       
       - name: Test client service
         run: |
