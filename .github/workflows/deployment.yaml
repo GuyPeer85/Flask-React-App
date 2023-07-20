@@ -77,4 +77,9 @@ jobs:
         run: curl http://127.0.0.1:5000/api/message
 
       - name: Display Minikube IP
-        run: minikube IP
+        run: minikube ip
+      
+      - name: Test client service
+        run: |
+          minikube_ip=$(minikube ip)
+          curl $minikube_ip:30000
